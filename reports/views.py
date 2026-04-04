@@ -91,3 +91,16 @@ class ReportViewSet(viewsets.ModelViewSet):
             )
         data = lookup_council(postcode)
         return Response(data)
+
+from rest_framework.decorators import api_view
+
+@api_view(['GET'])
+def test_postcode(request):
+    import requests
+    url = "https://api.postcodes.io/postcodes/M328ZA"
+    try:
+        r = requests.get(url, timeout=10)
+        return Response({'status': r.status_code, 'body': r.json()})
+    except Exception as e:
+        return Response({'error': str(e)})
+
