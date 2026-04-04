@@ -11,11 +11,12 @@ from .serializers import ReportSerializer, ReportListSerializer
 
 
 def lookup_council(postcode):
-    ## Uses free UK gov API to find council from postcode
     try:
         postcode_clean = postcode.replace(' ', '').upper()
         url = f"https://api.postcodes.io/postcodes/{postcode_clean}"
         response = requests.get(url, timeout=5)
+        print(f"Postcodes.io status: {response.status_code}")
+        print(f"Postcodes.io response: {response.text}")
         if response.status_code == 200:
             data = response.json()['result']
             return {
@@ -23,10 +24,9 @@ def lookup_council(postcode):
                 'county': data.get('admin_county', ''),
                 'region': data.get('region', ''),
             }
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Council lookup error: {e}")
     return {}
-
 
 class ReportViewSet(viewsets.ModelViewSet):
     queryset = Report.objects.all()
