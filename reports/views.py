@@ -12,7 +12,7 @@ from .serializers import ReportSerializer, ReportListSerializer
 
 def lookup_council(postcode):
     try:
-        postcode_clean = postcode.replace(' ', '').upper()
+        postcode_clean = postcode.replace(' ', '').replace('+', '').upper()
         url = f"https://api.postcodes.io/postcodes/{postcode_clean}"
         response = requests.get(url, timeout=5)
         print(f"Postcodes.io status: {response.status_code}")
@@ -27,6 +27,7 @@ def lookup_council(postcode):
     except Exception as e:
         print(f"Council lookup error: {e}")
     return {}
+
 
 class ReportViewSet(viewsets.ModelViewSet):
     queryset = Report.objects.all()
