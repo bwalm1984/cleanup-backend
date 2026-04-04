@@ -97,9 +97,9 @@ from rest_framework.decorators import api_view
 @api_view(['GET'])
 def test_postcode(request):
     import requests
-    postcode = request.query_params.get('postcode', 'M32 8ZA')
+    postcode = request.query_params.get('postcode', 'M320JG')
     postcode_clean = postcode.replace(' ', '').replace('+', '').upper()
-    url = f"https://api.postcodes.io/postcodes/SW1A1AA"
+    url = f"https://api.postcodes.io/postcodes/{postcode_clean}"
     try:
         r = requests.get(url, timeout=10)
         return Response({'status': r.status_code, 'body': r.json(), 'postcode_sent': postcode_clean})
