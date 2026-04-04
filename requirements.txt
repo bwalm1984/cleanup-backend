@@ -7,4 +7,5 @@ python-dotenv
 gunicorn
 requests
 whitenoise
+dj-database-url
 
