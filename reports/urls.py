@@ -7,6 +7,5 @@ router.register(r'reports', ReportViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('test-postcode/', test_postcode),
 ]
 
