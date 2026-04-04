@@ -99,7 +99,7 @@ def test_postcode(request):
     import requests
     postcode = request.query_params.get('postcode', 'M32 8ZA')
     postcode_clean = postcode.replace(' ', '').replace('+', '').upper()
-    url = f"https://api.postcodes.io/postcodes/{postcode_clean}"
+    url = f"https://api.postcodes.io/postcodes/SW1A1AA"
     try:
         r = requests.get(url, timeout=10)
         return Response({'status': r.status_code, 'body': r.json(), 'postcode_sent': postcode_clean})
