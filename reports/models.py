@@ -44,8 +44,8 @@ class Report(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='reports')
 
     ## Location
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    latitude = models.DecimalField(max_digits=10, decimal_places=7)
+    longitude = models.DecimalField(max_digits=10, decimal_places=7)
     address = models.CharField(max_length=255, blank=True)
     postcode = models.CharField(max_length=10, blank=True)
 
