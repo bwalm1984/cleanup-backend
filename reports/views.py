@@ -16,7 +16,6 @@ def lookup_council(postcode):
         url = f"https://api.postcodes.io/postcodes/{postcode_clean}"
         response = requests.get(url, timeout=5)
         print(f"Postcodes.io status: {response.status_code}")
-        print(f"Postcodes.io response: {response.text}")
         if response.status_code == 200:
             data = response.json()['result']
             return {
@@ -45,7 +44,6 @@ class ReportViewSet(viewsets.ModelViewSet):
         lng_min = self.request.query_params.get('lng_min')
         lng_max = self.request.query_params.get('lng_max')
         status_filter = self.request.query_params.get('status')
-
         if all([lat_min, lat_max, lng_min, lng_max]):
             queryset = queryset.filter(
                 latitude__gte=lat_min, latitude__lte=lat_max,
@@ -69,7 +67,6 @@ class ReportViewSet(viewsets.ModelViewSet):
         postcode = serializer.validated_data.get('postcode', '')
         council_data = lookup_council(postcode) if postcode else {}
         print(f"Validated data: {serializer.validated_data}")
-        print(f"Council data: {council_data}")
         serializer.save(
             user=None,
             council_name=council_data.get('council_name', ''),
@@ -99,4 +96,3 @@ class ReportViewSet(viewsets.ModelViewSet):
             )
         data = lookup_council(postcode)
         return Response(data)
-
