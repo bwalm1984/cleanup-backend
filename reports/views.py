@@ -2,7 +2,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny
 from django.utils import timezone
 import requests
 
@@ -31,7 +31,7 @@ def lookup_council(postcode):
 
 class ReportViewSet(viewsets.ModelViewSet):
     queryset = Report.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -60,7 +60,7 @@ class ReportViewSet(viewsets.ModelViewSet):
         postcode = serializer.validated_data.get('postcode', '')
         council_data = lookup_council(postcode) if postcode else {}
         serializer.save(
-            user=self.request.user,
+            user=None,
             council_name=council_data.get('council_name', ''),
         )
 
