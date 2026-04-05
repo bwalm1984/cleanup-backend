@@ -40,7 +40,6 @@ class ReportViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Report.objects.all()
-        ## Filter by bounding box for map view
         lat_min = self.request.query_params.get('lat_min')
         lat_max = self.request.query_params.get('lat_max')
         lng_min = self.request.query_params.get('lng_min')
@@ -56,9 +55,21 @@ class ReportViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(status=status_filter)
         return queryset
 
+    def create(self, request, *args, **kwargs):
+        print(f"Incoming data: {request.data}")
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            print(f"Validation errors: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
     def perform_create(self, serializer):
         postcode = serializer.validated_data.get('postcode', '')
         council_data = lookup_council(postcode) if postcode else {}
+        print(f"Validated data: {serializer.validated_data}")
+        print(f"Council data: {council_data}")
         serializer.save(
             user=None,
             council_name=council_data.get('council_name', ''),
@@ -66,7 +77,6 @@ class ReportViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def mark_cleared(self, request, pk=None):
-        ## Lets users mark a report as cleared
         report = self.get_object()
         report.status = Report.STATUS_CLEARED
         report.cleared_at = timezone.now()
@@ -75,14 +85,12 @@ class ReportViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def my_reports(self, request):
-        ## Returns only the logged-in user's reports
         reports = Report.objects.filter(user=request.user)
         serializer = ReportSerializer(reports, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
     def council_lookup(self, request):
-        ## Standalone postcode lookup for the app
         postcode = request.query_params.get('postcode', '')
         if not postcode:
             return Response(
